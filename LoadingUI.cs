@@ -14,7 +14,7 @@ namespace PITPO_RGR_ArtificialLife
     {
         private Graphics graphics;
         private GameEngine gameEngine;
-        private int resolution = 9;
+        private int resolution = 3;
 
         public LoadingUI()
         {
