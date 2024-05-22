@@ -38,6 +38,10 @@
             this.bStart = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.nudHerbAmount = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
+            this.nudPredAmount = new System.Windows.Forms.NumericUpDown();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -45,6 +49,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudPlantReg)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPlantAmount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHerbAmount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPredAmount)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -58,6 +64,10 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.nudPredAmount);
+            this.splitContainer1.Panel1.Controls.Add(this.label4);
+            this.splitContainer1.Panel1.Controls.Add(this.nudHerbAmount);
+            this.splitContainer1.Panel1.Controls.Add(this.label3);
             this.splitContainer1.Panel1.Controls.Add(this.nudPlantReg);
             this.splitContainer1.Panel1.Controls.Add(this.label2);
             this.splitContainer1.Panel1.Controls.Add(this.nudPlantAmount);
@@ -165,6 +175,70 @@
             this.timer1.Interval = 200;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // nudHerbAmount
+            // 
+            this.nudHerbAmount.Location = new System.Drawing.Point(13, 232);
+            this.nudHerbAmount.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.nudHerbAmount.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudHerbAmount.Name = "nudHerbAmount";
+            this.nudHerbAmount.Size = new System.Drawing.Size(200, 20);
+            this.nudHerbAmount.TabIndex = 7;
+            this.nudHerbAmount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudHerbAmount.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(10, 215);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(184, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "Стартовое количество травоядных";
+            // 
+            // nudPredAmount
+            // 
+            this.nudPredAmount.Location = new System.Drawing.Point(13, 281);
+            this.nudPredAmount.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.nudPredAmount.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudPredAmount.Name = "nudPredAmount";
+            this.nudPredAmount.Size = new System.Drawing.Size(200, 20);
+            this.nudPredAmount.TabIndex = 9;
+            this.nudPredAmount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudPredAmount.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(10, 264);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(174, 13);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "Стартовое количество хищников";
+            // 
             // LoadingUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -182,6 +256,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudPlantReg)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPlantAmount)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHerbAmount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPredAmount)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -197,6 +273,10 @@
         private System.Windows.Forms.NumericUpDown nudPlantAmount;
         private System.Windows.Forms.NumericUpDown nudPlantReg;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.NumericUpDown nudPredAmount;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.NumericUpDown nudHerbAmount;
+        private System.Windows.Forms.Label label3;
     }
 }
 

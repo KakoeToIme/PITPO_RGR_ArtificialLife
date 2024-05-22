@@ -14,7 +14,7 @@ namespace PITPO_RGR_ArtificialLife
     {
         private Graphics graphics;
         private GameEngine gameEngine;
-        private int resolution = 3;
+        private readonly int resolution = 9;
 
         public LoadingUI()
         {
@@ -27,13 +27,16 @@ namespace PITPO_RGR_ArtificialLife
 
             nudPlantAmount.Enabled = false;
             nudPlantReg.Enabled = false;
+            nudHerbAmount.Enabled = false;
+            nudPredAmount.Enabled = false;
 
             gameEngine = new GameEngine
              (
                  rows: pictureBox1.Height / resolution,
                  cols: pictureBox1.Width / resolution,
                  plantAmount: (int) nudPlantAmount.Value,
-                 plantReg: (int) nudPlantReg.Value
+                 plantReg: (int) nudPlantReg.Value,
+                 herbivoreAmount: (int) nudHerbAmount.Value
              );
 
             pictureBox1.Image = new Bitmap(pictureBox1.Width, pictureBox1.Height);
@@ -71,6 +74,11 @@ namespace PITPO_RGR_ArtificialLife
         private void StopGame()
         {
             if (!timer1.Enabled) return;
+
+            nudPlantAmount.Enabled = true;
+            nudPlantReg.Enabled = true;
+            nudHerbAmount.Enabled = true;
+            nudPredAmount.Enabled = true;
 
             timer1.Stop();
         }
