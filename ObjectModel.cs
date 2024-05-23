@@ -13,14 +13,14 @@ namespace PITPO_RGR_ArtificialLife
         public bool CanMove { get; protected set; }
         public uint Energy { get; set; }
         public string Colour { get; protected set; }
-        public bool Focus { get; set; }
+        public bool HadMoved { get; set; }
         private uint age = 0;
         private uint traveledDistance = 0;
         private uint birihChildCD = 0;
 
         public ObjectModel()
         {
-            Focus = false;
+            HadMoved = true;
             IsAlive = false;
             CanMove = false;
             Energy = 0;
@@ -32,7 +32,7 @@ namespace PITPO_RGR_ArtificialLife
     {
         public Plant()
         {
-            Focus = false;
+            HadMoved = true;
             IsAlive = true;
             CanMove = false;
             Energy = 50;
@@ -44,7 +44,7 @@ namespace PITPO_RGR_ArtificialLife
     {
         public Herbivore()
         {
-            Focus = false;
+            HadMoved = true;
             IsAlive = true;
             CanMove = true;
             Energy = 100;
@@ -56,7 +56,7 @@ namespace PITPO_RGR_ArtificialLife
     {
         public Predator()
         {
-            Focus = false;
+            HadMoved = true;
             IsAlive = true;
             CanMove = true;
             Energy = 75;

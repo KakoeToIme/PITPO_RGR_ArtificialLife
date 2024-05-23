@@ -32,9 +32,7 @@ namespace PITPO_RGR_ArtificialLife
                 }
             }
 
-            CreatingPlant(plantAmount);
-
-            CreatingHerbivore(herbivoreAmount);
+            StartObjectSpawn(plantAmount, herbivoreAmount);
         }
 
         public void NextGeneration()
@@ -42,13 +40,13 @@ namespace PITPO_RGR_ArtificialLife
             var newField = new ObjectModel[cols, rows];
             newField = objMod;
 
-            CheakPlantEnergy(newField);
-
-            CheakHerbivoreEnergy(newField);
+            CheakObjectEnergy(newField);
 
             PlantRegeneration(plantReg, newField);
 
             MoveHerbivore(newField);
+
+            ClearMoveList(newField);
 
             objMod = newField;
             CurrentGeneration++;
@@ -91,23 +89,6 @@ namespace PITPO_RGR_ArtificialLife
             }
         }
 
-        private ObjectModel[,] CheakPlantEnergy(ObjectModel[,] objModel)
-        {
-            for (int x = 0; x < cols; x++)
-            {
-                for (int y = 0; y < rows; y++)
-                {
-                    if (objModel[x, y] != null && objModel[x, y].IsAlive && objModel[x, y].Colour == "Green")
-                    {
-                        objModel[x, y].Energy--;
-                        if (objModel[x, y].Energy < 1) objModel[x, y] = new ObjectModel();
-                    }
-                }
-            }
-
-            return objModel;
-        }
-
         private ObjectModel[,] PlantRegeneration(int plantRegeneration, ObjectModel[,] objModel)
         {
             if (CurrentGeneration != 0 && CurrentGeneration % 25 == 0)
@@ -119,27 +100,6 @@ namespace PITPO_RGR_ArtificialLife
         }
 
         //Методы для работы с травоядными
-        private void CreatingHerbivore(int herbivoreAmount)
-        {
-            Random random = new Random();
-
-            int cycle = herbivoreAmount;
-
-            for (int dr = 0; dr < cycle; dr++)
-            {
-                int x = random.Next(cols);
-                int y = random.Next(rows);
-
-                if (objMod[x, y].IsAlive)
-                {
-                    cycle++;
-                    continue;
-                }
-
-                objMod[x, y] = new Herbivore();
-            }
-        }
-
         private ObjectModel[,] MoveHerbivore(ObjectModel[,] objModel)
         {
             Random random = new Random();
@@ -147,7 +107,7 @@ namespace PITPO_RGR_ArtificialLife
             {
                 for (int y = 0; y < rows; y++)
                 {
-                    if (objModel[x, y] != null && objModel[x, y].IsAlive && objModel[x, y].Colour == "Blue")
+                    if (objModel[x, y] != null && objModel[x, y].IsAlive && objModel[x,y].HadMoved == false && objModel[x, y].Colour == "Blue")
                     {
                         var coordOfPlant = CheakNearbyPlant(x, y);
 
@@ -172,6 +132,7 @@ namespace PITPO_RGR_ArtificialLife
                             if (attempts < 10)
                             {
                                 objModel[newX, newY] = objModel[x, y];
+                                objModel[newX, newY].HadMoved = true;
                                 objModel[x, y] = new ObjectModel();
                             }
                         }
@@ -197,11 +158,13 @@ namespace PITPO_RGR_ArtificialLife
                 {
                     objModel[x, y].Energy += objModel[newX, newY].Energy;
                     objModel[newX, newY] = objModel[x, y];
+                    objModel[newX, newY].HadMoved = true; 
                     objModel[x, y] = new ObjectModel();
                 }
                 else if (!objModel[newX, newY].IsAlive)
                 {
                     objModel[newX, newY] = objModel[x, y];
+                    objModel[newX, newY].HadMoved = true;
                     objModel[x, y] = new ObjectModel();
                 }
             }
@@ -210,7 +173,7 @@ namespace PITPO_RGR_ArtificialLife
 
         private (int, int) CheakNearbyPlant(int x, int y)
         {
-            int radius = 4;
+            int radius = 8;
 
             for (int i = Math.Max(0, x - radius); i <= Math.Min(cols - 1, x + radius); i++)
             {
@@ -226,13 +189,47 @@ namespace PITPO_RGR_ArtificialLife
             return (-1, -1);
         }
 
-        private ObjectModel[,] CheakHerbivoreEnergy(ObjectModel[,] objModel)
+        //Методы для работы со всеми обьектами (общие методы)
+
+        private void StartObjectSpawn(int plantAmount, int herbivoreAmount)
+        {
+            Random random = new Random();
+
+            int mode = 0;
+
+            int cycle = plantAmount;
+
+            for (int dr = 0; dr < cycle; dr++)
+            {
+                int x = random.Next(cols);
+                int y = random.Next(rows);
+
+                if (objMod[x, y].IsAlive)
+                {
+                    cycle++;
+                    continue;
+                }
+
+                if (mode == 0 ) objMod[x, y] = new Plant();
+
+                if (mode == 1) objMod[x, y] = new Herbivore();
+
+                if (dr == cycle - 1 && mode == 0)
+                {
+                    dr = 0;
+                    cycle = herbivoreAmount;
+                    mode++;
+                }
+            }
+        }
+
+        private ObjectModel[,] CheakObjectEnergy(ObjectModel[,] objModel)
         {
             for (int x = 0; x < cols; x++)
             {
                 for (int y = 0; y < rows; y++)
                 {
-                    if (objModel[x, y] != null && objModel[x, y].IsAlive && objModel[x, y].Colour == "Blue")
+                    if (objModel[x, y] != null && objModel[x, y].IsAlive)
                     {
                         objModel[x, y].Energy--;
                         if (objModel[x, y].Energy < 1) objModel[x, y] = new ObjectModel();
@@ -241,6 +238,20 @@ namespace PITPO_RGR_ArtificialLife
             }
 
             return objModel;
+        }
+
+        private void ClearMoveList(ObjectModel[,] objModel)
+        {
+            for (int x = 0; x < cols; x++)
+            {
+                for (int y = 0; y < rows;y++)
+                {
+                    if (objModel[x, y].IsAlive && objModel[x, y].HadMoved == true)
+                    {
+                        objModel[x, y].HadMoved = false;
+                    }
+                }
+            }
         }
 
         private bool IsWithinBounds(int x, int y)
