@@ -36,7 +36,8 @@ namespace PITPO_RGR_ArtificialLife
                  cols: pictureBox1.Width / resolution,
                  plantAmount: (int) nudPlantAmount.Value,
                  plantReg: (int) nudPlantReg.Value,
-                 herbivoreAmount: (int) nudHerbAmount.Value
+                 herbivoreAmount: (int) nudHerbAmount.Value,
+                 predatorAmount: (int) nudPredAmount.Value 
              );
 
             pictureBox1.Image = new Bitmap(pictureBox1.Width, pictureBox1.Height);

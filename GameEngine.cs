@@ -16,7 +16,7 @@ namespace PITPO_RGR_ArtificialLife
         private readonly int cols;
         private readonly int plantReg;
 
-        public GameEngine(int rows, int cols, int plantAmount, int plantReg, int herbivoreAmount)
+        public GameEngine(int rows, int cols, int plantAmount, int plantReg, int herbivoreAmount, int predatorAmount)
         {
             this.rows = rows;
             this.cols = cols;
@@ -32,7 +32,7 @@ namespace PITPO_RGR_ArtificialLife
                 }
             }
 
-            StartObjectSpawn(plantAmount, herbivoreAmount);
+            StartObjectSpawn(plantAmount, herbivoreAmount, predatorAmount);
         }
 
         public void NextGeneration()
@@ -46,7 +46,11 @@ namespace PITPO_RGR_ArtificialLife
 
             MoveHerbivore(newField);
 
+            MovePredator(newField);
+
             ReproductionOfHerbivore(newField);
+
+            ReproductionOfPredator(newField);
 
             ClearMoveList(newField);
 
@@ -111,7 +115,7 @@ namespace PITPO_RGR_ArtificialLife
             {
                 for (int y = 0; y < rows; y++)
                 {
-                    if (objModel[x, y] != null && objModel[x, y].IsAlive && objModel[x,y].HadMoved == false && objModel[x, y].Colour == "Blue")
+                    if (objModel[x, y] != null && objModel[x, y].IsAlive && objModel[x, y].HadMoved == false && objModel[x, y].Colour == "Blue")
                     {
                         var coordOfPlant = CheakNearbyPlant(x, y);
 
@@ -119,7 +123,7 @@ namespace PITPO_RGR_ArtificialLife
                         {
                             int targetX = coordOfPlant.Item1;
                             int targetY = coordOfPlant.Item2;
-                            MoveTowards(objModel, x, y, targetX, targetY);
+                            MoveTowardsHerbivore(objModel, x, y, targetX, targetY);
                         }
                         else
                         {
@@ -147,7 +151,7 @@ namespace PITPO_RGR_ArtificialLife
             return objModel;
         }
 
-        private void MoveTowards(ObjectModel[,] objModel, int x, int y, int targetX, int targetY)
+        private void MoveTowardsHerbivore(ObjectModel[,] objModel, int x, int y, int targetX, int targetY)
         {
             int sgnX = Math.Sign(targetX - x);
             int sgnY = Math.Sign(targetY - y);
@@ -162,7 +166,7 @@ namespace PITPO_RGR_ArtificialLife
                 {
                     objModel[x, y].Energy += objModel[newX, newY].Energy;
                     objModel[newX, newY] = objModel[x, y];
-                    objModel[newX, newY].HadMoved = true; 
+                    objModel[newX, newY].HadMoved = true;
                     objModel[x, y] = new ObjectModel();
                 }
                 else if (!objModel[newX, newY].IsAlive)
@@ -199,9 +203,9 @@ namespace PITPO_RGR_ArtificialLife
             {
                 for (int y = 0; y < rows; y++)
                 {
-                    if (objModel[x, y] != null && objModel[x, y].IsAlive && objModel [x, y].Colour == "Blue")
+                    if (objModel[x, y] != null && objModel[x, y].IsAlive && objModel[x, y].Colour == "Blue")
                     {
-                        ChildBirth(objModel, x, y);
+                        HerbivoreChildBirth(objModel, x, y);
                     }
                 }
             }
@@ -209,7 +213,7 @@ namespace PITPO_RGR_ArtificialLife
             return objModel;
         }
 
-        private void ChildBirth(ObjectModel[,] objModel, int x, int y)
+        private void HerbivoreChildBirth(ObjectModel[,] objModel, int x, int y)
         {
             if (objModel[x, y].BirihChildCD > 0)
             {
@@ -262,15 +266,161 @@ namespace PITPO_RGR_ArtificialLife
             }
         }
 
-        private void DecreaseBirthCD(ObjectModel[,] objModel)
+        //Методы для работы с хищниками
+
+        private (int, int) CheakNearbyHerbivore(int x, int y)
+        {
+            int radius = 8;
+
+            for (int i = Math.Max(0, x - radius); i <= Math.Min(cols - 1, x + radius); i++)
+            {
+                for (int j = Math.Max(0, y - radius); j <= Math.Min(rows - 1, y + radius); j++)
+                {
+                    if (objMod[i, j] != null && objMod[i, j].IsAlive && objMod[i, j].Colour == "Blue")
+                    {
+                        return (i, j);
+                    }
+                }
+            }
+
+            return (-1, -1);
+        }
+
+        private ObjectModel[,] MovePredator(ObjectModel[,] objModel)
+        {
+            Random random = new Random();
+
+            for (int x = 0; x < cols; x++)
+            {
+                for (int y = 0; y < rows; y++)
+                {
+                    if (objModel[x, y] != null && objModel[x, y].IsAlive && objModel[x, y].HadMoved == false && objModel[x, y].Colour == "Crimson")
+                    {
+                        var coordOfHerbivore = CheakNearbyHerbivore(x, y);
+
+                        if (coordOfHerbivore != (-1, -1))
+                        {
+                            int targetX = coordOfHerbivore.Item1;
+                            int targetY = coordOfHerbivore.Item2;
+                            MoveTowardsPredator(objModel, x, y, targetX, targetY);
+                        }
+                        else
+                        {
+                            int newX, newY;
+                            int attempts = 0;
+
+                            do
+                            {
+                                newX = random.Next(Math.Max(0, x - 1), Math.Min(cols, x + 2));
+                                newY = random.Next(Math.Max(0, y - 1), Math.Min(rows, y + 2));
+                                attempts++;
+                            } while (attempts < 10 && (newX == x && newY == y || objModel[newX, newY].IsAlive));
+
+                            if (attempts < 10)
+                            {
+                                objModel[newX, newY] = objModel[x, y];
+                                objModel[newX, newY].HadMoved = true;
+                                objModel[x, y] = new ObjectModel();
+                            }
+                        }
+                    }
+                }
+            }
+
+            return objModel;
+        }
+
+        private void MoveTowardsPredator(ObjectModel[,] objModel, int x, int y, int targetX, int targetY)
+        {
+            int sgnX = Math.Sign(targetX - x);
+            int sgnY = Math.Sign(targetY - y);
+
+            int newX = x + sgnX;
+            int newY = y + sgnY;
+
+            if (IsWithinBounds(newX, newY))
+            {
+                // Съедание растений
+                if (objModel[newX, newY].IsAlive && objModel[newX, newY].Colour == "Blue")
+                {
+                    objModel[x, y].Energy += objModel[newX, newY].Energy;
+                    objModel[newX, newY] = objModel[x, y];
+                    objModel[newX, newY].HadMoved = true;
+                    objModel[x, y] = new ObjectModel();
+                }
+                else if (!objModel[newX, newY].IsAlive)
+                {
+                    objModel[newX, newY] = objModel[x, y];
+                    objModel[newX, newY].HadMoved = true;
+                    objModel[x, y] = new ObjectModel();
+                }
+            }
+        }
+        private ObjectModel[,] ReproductionOfPredator(ObjectModel[,] objModel)
         {
             for (int x = 0; x < cols; x++)
             {
                 for (int y = 0; y < rows; y++)
                 {
-                    if (objModel[x, y] != null && objModel[x, y].Colour == "Blue" && objModel[x, y].BirihChildCD != 0)
+                    if (objModel[x, y] != null && objModel[x, y].IsAlive && objModel[x, y].Colour == "Crimson")
                     {
-                        objModel[x, y].BirihChildCD--;
+                        PredatorChildBirth(objModel, x, y);
+                    }
+                }
+            }
+
+            return objModel;
+        }
+
+
+        private void PredatorChildBirth(ObjectModel[,] objModel, int x, int y)
+        {
+            if (objModel[x, y].BirihChildCD > 0)
+            {
+                return;
+            }
+
+            Random random = new Random();
+
+            for (int newX = x - 1; newX <= x + 1; newX++)
+            {
+                for (int newY = y - 1; newY <= y + 1; newY++)
+                {
+                    if (IsWithinBounds(newX, newY) && (newX != x || newY != y))
+                    {
+                        if (objModel[newX, newY] != null && objModel[newX, newY].Colour == "Crimson" && objModel[newX, newY].BirihChildCD == 0)
+                        {
+                            int attempts = 0;
+                            int coordXChild;
+                            int coordYChild;
+
+                            while (true)
+                            {
+                                coordXChild = random.Next(newX - 2, newX + 2);
+                                coordYChild = random.Next(newY - 2, newY + 2);
+                                attempts++;
+
+                                if (IsWithinBounds(coordXChild, coordYChild) && !objModel[coordXChild, coordYChild].IsAlive)
+                                {
+                                    break;
+                                }
+                                if (attempts > 25)
+                                {
+                                    coordXChild = -1;
+                                    coordYChild = -1;
+                                    break;
+                                }
+                            }
+
+                            if (coordXChild != -1 && coordYChild != -1)
+                            {
+                                objModel[coordXChild, coordYChild] = new Predator();
+                                objModel[coordXChild, coordYChild].BirihChildCD = 20;
+                                objModel[newX, newY].BirihChildCD = 20;
+                                objModel[x, y].BirihChildCD = 20;
+                                return;
+                            }
+                        }
                     }
                 }
             }
@@ -278,7 +428,7 @@ namespace PITPO_RGR_ArtificialLife
 
         //Методы для работы со всеми обьектами (общие методы)
 
-        private void StartObjectSpawn(int plantAmount, int herbivoreAmount)
+        private void StartObjectSpawn(int plantAmount, int herbivoreAmount, int predatorAmount)
         {
             Random random = new Random();
 
@@ -297,14 +447,17 @@ namespace PITPO_RGR_ArtificialLife
                     continue;
                 }
 
-                if (mode == 0 ) objMod[x, y] = new Plant();
+                if (mode == 0) objMod[x, y] = new Plant();
 
                 if (mode == 1) objMod[x, y] = new Herbivore();
 
-                if (dr == cycle - 1 && mode == 0)
+                if (mode == 2) objMod[x, y] = new Predator();
+
+                if (dr == cycle - 1 && mode < 2)
                 {
                     dr = 0;
-                    cycle = herbivoreAmount;
+                    if (mode == 0) cycle = herbivoreAmount;
+                    if (mode == 1) cycle = predatorAmount;
                     mode++;
                 }
             }
@@ -331,11 +484,25 @@ namespace PITPO_RGR_ArtificialLife
         {
             for (int x = 0; x < cols; x++)
             {
-                for (int y = 0; y < rows;y++)
+                for (int y = 0; y < rows; y++)
                 {
                     if (objModel[x, y].IsAlive && objModel[x, y].HadMoved == true)
                     {
                         objModel[x, y].HadMoved = false;
+                    }
+                }
+            }
+        }
+
+        private void DecreaseBirthCD(ObjectModel[,] objModel)
+        {
+            for (int x = 0; x < cols; x++)
+            {
+                for (int y = 0; y < rows; y++)
+                {
+                    if (objModel[x, y] != null && (objModel[x, y].Colour == "Blue" || objModel[x, y].Colour == "Crimson") && objModel[x, y].BirihChildCD != 0)
+                    {
+                        objModel[x, y].BirihChildCD--;
                     }
                 }
             }

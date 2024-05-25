@@ -61,7 +61,7 @@ namespace PITPO_RGR_ArtificialLife
             HadMoved = true;
             IsAlive = true;
             CanMove = true;
-            Energy = 75;
+            Energy = 125;
             Colour = "Crimson";
         }
     }
