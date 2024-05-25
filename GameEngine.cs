@@ -46,7 +46,11 @@ namespace PITPO_RGR_ArtificialLife
 
             MoveHerbivore(newField);
 
+            ReproductionOfHerbivore(newField);
+
             ClearMoveList(newField);
+
+            DecreaseBirthCD(newField);
 
             objMod = newField;
             CurrentGeneration++;
@@ -187,6 +191,89 @@ namespace PITPO_RGR_ArtificialLife
             }
 
             return (-1, -1);
+        }
+
+        private ObjectModel[,] ReproductionOfHerbivore(ObjectModel[,] objModel)
+        {
+            for (int x = 0; x < cols; x++)
+            {
+                for (int y = 0; y < rows; y++)
+                {
+                    if (objModel[x, y] != null && objModel[x, y].IsAlive && objModel [x, y].Colour == "Blue")
+                    {
+                        ChildBirth(objModel, x, y);
+                    }
+                }
+            }
+
+            return objModel;
+        }
+
+        private void ChildBirth(ObjectModel[,] objModel, int x, int y)
+        {
+            if (objModel[x, y].BirihChildCD > 0)
+            {
+                return;
+            }
+
+            Random random = new Random();
+
+            for (int newX = x - 1; newX <= x + 1; newX++)
+            {
+                for (int newY = y - 1; newY <= y + 1; newY++)
+                {
+                    if (IsWithinBounds(newX, newY) && (newX != x || newY != y))
+                    {
+                        if (objModel[newX, newY] != null && objModel[newX, newY].Colour == "Blue" && objModel[newX, newY].BirihChildCD == 0)
+                        {
+                            int attempts = 0;
+                            int coordXChild;
+                            int coordYChild;
+
+                            while (true)
+                            {
+                                coordXChild = random.Next(newX - 2, newX + 2);
+                                coordYChild = random.Next(newY - 2, newY + 2);
+                                attempts++;
+
+                                if (IsWithinBounds(coordXChild, coordYChild) && !objModel[coordXChild, coordYChild].IsAlive)
+                                {
+                                    break;
+                                }
+                                if (attempts > 25)
+                                {
+                                    coordXChild = -1;
+                                    coordYChild = -1;
+                                    break;
+                                }
+                            }
+
+                            if (coordXChild != -1 && coordYChild != -1)
+                            {
+                                objModel[coordXChild, coordYChild] = new Herbivore();
+                                objModel[coordXChild, coordYChild].BirihChildCD = 20;
+                                objModel[newX, newY].BirihChildCD = 20;
+                                objModel[x, y].BirihChildCD = 20;
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void DecreaseBirthCD(ObjectModel[,] objModel)
+        {
+            for (int x = 0; x < cols; x++)
+            {
+                for (int y = 0; y < rows; y++)
+                {
+                    if (objModel[x, y] != null && objModel[x, y].Colour == "Blue" && objModel[x, y].BirihChildCD != 0)
+                    {
+                        objModel[x, y].BirihChildCD--;
+                    }
+                }
+            }
         }
 
         //Методы для работы со всеми обьектами (общие методы)

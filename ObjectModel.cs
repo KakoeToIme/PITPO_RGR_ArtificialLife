@@ -14,12 +14,11 @@ namespace PITPO_RGR_ArtificialLife
         public uint Energy { get; set; }
         public string Colour { get; protected set; }
         public bool HadMoved { get; set; }
-        private uint age = 0;
-        private uint traveledDistance = 0;
-        private uint birihChildCD = 0;
+        public uint BirihChildCD { get; set; }
 
         public ObjectModel()
         {
+            BirihChildCD = 0;
             HadMoved = true;
             IsAlive = false;
             CanMove = false;
@@ -32,6 +31,7 @@ namespace PITPO_RGR_ArtificialLife
     {
         public Plant()
         {
+            BirihChildCD = 0;
             HadMoved = true;
             IsAlive = true;
             CanMove = false;
@@ -44,6 +44,7 @@ namespace PITPO_RGR_ArtificialLife
     {
         public Herbivore()
         {
+            BirihChildCD = 0;
             HadMoved = true;
             IsAlive = true;
             CanMove = true;
@@ -56,6 +57,7 @@ namespace PITPO_RGR_ArtificialLife
     {
         public Predator()
         {
+            BirihChildCD = 0;
             HadMoved = true;
             IsAlive = true;
             CanMove = true;
