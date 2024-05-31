@@ -10,7 +10,6 @@ namespace PITPO_RGR_ArtificialLife
     public class ObjectModel
     {
         public bool IsAlive { get; set; }
-        public bool CanMove { get; protected set; }
         public uint Energy { get; set; }
         public string Colour { get; protected set; }
         public bool HadMoved { get; set; }
@@ -21,7 +20,6 @@ namespace PITPO_RGR_ArtificialLife
             BirihChildCD = 0;
             HadMoved = true;
             IsAlive = false;
-            CanMove = false;
             Energy = 0;
             Colour = "Transparent";
         }
@@ -34,7 +32,6 @@ namespace PITPO_RGR_ArtificialLife
             BirihChildCD = 0;
             HadMoved = true;
             IsAlive = true;
-            CanMove = false;
             Energy = 50;
             Colour = "Green";
         }
@@ -47,7 +44,6 @@ namespace PITPO_RGR_ArtificialLife
             BirihChildCD = 0;
             HadMoved = true;
             IsAlive = true;
-            CanMove = true;
             Energy = 100;
             Colour = "Blue";
         }
@@ -60,7 +56,6 @@ namespace PITPO_RGR_ArtificialLife
             BirihChildCD = 0;
             HadMoved = true;
             IsAlive = true;
-            CanMove = true;
             Energy = 125;
             Colour = "Crimson";
         }
