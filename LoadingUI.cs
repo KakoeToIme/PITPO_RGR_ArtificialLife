@@ -69,6 +69,12 @@ namespace PITPO_RGR_ArtificialLife
 
             pictureBox1.Refresh();
             Text = $"Generation {gameEngine.CurrentGeneration}";
+
+            if (gameEngine.CheakSystemAlive() == true)
+            {
+                StopGame();
+            }
+
             gameEngine.NextGeneration();
         }
 

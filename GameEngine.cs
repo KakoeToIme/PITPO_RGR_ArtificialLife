@@ -38,6 +38,7 @@ namespace PITPO_RGR_ArtificialLife
         public void NextGeneration()
         {
             var newField = new ObjectModel[cols, rows];
+
             newField = objMod;
 
             CheakObjectEnergy(newField);
@@ -506,6 +507,22 @@ namespace PITPO_RGR_ArtificialLife
                     }
                 }
             }
+        }
+
+        public bool CheakSystemAlive()
+        {
+            for (int x = 0; x < cols; x++)
+            {
+                for (int y = 0; y < rows; y++)
+                {
+                    if (objMod[x, y].IsAlive && (objMod[x, y].Colour == "Blue" || objMod[x, y].Colour == "Crimson"))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         private bool IsWithinBounds(int x, int y)
