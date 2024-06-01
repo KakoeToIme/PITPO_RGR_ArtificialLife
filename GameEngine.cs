@@ -335,7 +335,7 @@ namespace PITPO_RGR_ArtificialLife
 
             if (IsWithinBounds(newX, newY))
             {
-                // Съедание растений
+                // Съедание травоядных
                 if (objModel[newX, newY].IsAlive && objModel[newX, newY].Colour == "Blue")
                 {
                     objModel[x, y].Energy += objModel[newX, newY].Energy;
